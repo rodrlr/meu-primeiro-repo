@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GitHub do zero ao Pages</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;600&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
+
+<style>
+  :root{
+    --ground:#F5F8F5;
+    --surface:#FFFFFF;
+    --ink:#16201B;
+    --muted:#5B6B62;
+    --line:#DCE4DD;
+    --line-strong:#C3CFC6;
+    --accent:#1B7F4C;
+    --accent-soft:#E6F1EA;
+    --add:#12703A;
+    --add-bg:#E4F3E8;
+    --del:#B03127;
+    --del-bg:#FAE8E6;
+    --radius:10px;
+    --f-display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+    --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+    --f-mono:"IBM Plex Mono","Consolas",ui-monospace,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#101510;
+      --surface:#171D18;
+      --ink:#E7EDE7;
+      --muted:#9DAAA1;
+      --line:#2A332C;
+      --line-strong:#3B463D;
+      --accent:#55BE87;
+      --accent-soft:#16301F;
+      --add:#63C98A;
+      --add-bg:#152A1B;
+      --del:#E2857C;
+      --del-bg:#2E1917;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#101510;
+    --surface:#171D18;
+    --ink:#E7EDE7;
+    --muted:#9DAAA1;
+    --line:#2A332C;
+    --line-strong:#3B463D;
+    --accent:#55BE87;
+    --accent-soft:#16301F;
+    --add:#63C98A;
+    --add-bg:#152A1B;
+    --del:#E2857C;
+    --del-bg:#2E1917;
+  }
+
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--f-body);
+    font-size:17px;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding-inline:clamp(16px,5vw,40px);
+    padding-block:clamp(40px,7vw,76px) 80px;
+  }
+
+  /* cabeçalho */
+  .eyebrow{
+    font-family:var(--f-mono);
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--accent);
+    margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--f-display);
+    font-weight:700;
+    font-size:clamp(34px,6vw,52px);
+    line-height:1.05;
+    letter-spacing:-.02em;
+    text-wrap:balance;
+    margin:0 0 18px;
+  }
+  .lede{
+    font-size:19px;
+    color:var(--muted);
+    margin:0;
+    max-width:60ch;
+  }
+
+  .links{
+    list-style:none;
+    margin:34px 0 0;
+    padding:20px 0 0;
+    border-top:1px solid var(--line);
+    display:grid;
+    gap:10px;
+  }
+  .links li{
+    display:flex;
+    flex-wrap:wrap;
+    gap:4px 12px;
+    align-items:baseline;
+  }
+  .links span{
+    font-size:14px;
+    color:var(--muted);
+    min-width:150px;
+  }
+  .links a{
+    font-family:var(--f-mono);
+    font-size:14px;
+    color:var(--ink);
+    text-decoration-color:var(--line-strong);
+    text-underline-offset:3px;
+    word-break:break-all;
+  }
+  .links a:hover{color:var(--accent);text-decoration-color:var(--accent);}
+
+  /* sumário */
+  nav.toc{
+    margin-top:44px;
+    padding:22px 24px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  nav.toc p{
+    margin:0 0 12px;
+    font-family:var(--f-mono);
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  nav.toc ol{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:grid;
+    gap:8px;
+    counter-reset:toc;
+  }
+  nav.toc li{counter-increment:toc;}
+  nav.toc a{
+    color:var(--ink);
+    text-decoration:none;
+    display:flex;
+    gap:12px;
+  }
+  nav.toc a::before{
+    content:counter(toc,decimal-leading-zero);
+    font-family:var(--f-mono);
+    font-size:13px;
+    color:var(--accent);
+    padding-top:2px;
+  }
+  nav.toc a:hover{color:var(--accent);}
+
+  /* seções */
+  section{margin-top:64px;scroll-margin-top:24px;}
+  h2{
+    font-family:var(--f-display);
+    font-weight:700;
+    font-size:clamp(23px,3.6vw,30px);
+    line-height:1.2;
+    letter-spacing:-.015em;
+    text-wrap:balance;
+    margin:0 0 6px;
+    padding-bottom:12px;
+    border-bottom:2px solid var(--ink);
+  }
+  h3{
+    font-family:var(--f-display);
+    font-weight:500;
+    font-size:19px;
+    margin:32px 0 8px;
+  }
+  p{margin:16px 0;max-width:66ch;}
+  strong{font-weight:600;}
+
+  code{
+    font-family:var(--f-mono);
+    font-size:.87em;
+    background:var(--accent-soft);
+    color:var(--ink);
+    padding:1px 5px;
+    border-radius:4px;
+  }
+  .path{
+    font-family:var(--f-mono);
+    font-size:14px;
+    color:var(--muted);
+    background:none;
+    padding:0;
+  }
+  .path b{color:var(--ink);font-weight:600;}
+
+  ol.steps{
+    margin:18px 0;
+    padding:0;
+    list-style:none;
+    counter-reset:step;
+    display:grid;
+    gap:14px;
+  }
+  ol.steps li{
+    counter-increment:step;
+    display:grid;
+    grid-template-columns:26px 1fr;
+    gap:14px;
+    max-width:66ch;
+  }
+  ol.steps li::before{
+    content:counter(step);
+    font-family:var(--f-mono);
+    font-size:13px;
+    font-weight:600;
+    color:var(--accent);
+    background:var(--accent-soft);
+    border-radius:50%;
+    width:26px;
+    height:26px;
+    display:grid;
+    place-items:center;
+    margin-top:2px;
+  }
+
+  ul.plain{
+    margin:18px 0;
+    padding:0;
+    list-style:none;
+    display:grid;
+    gap:12px;
+    max-width:66ch;
+  }
+  ul.plain li{
+    padding-left:20px;
+    position:relative;
+  }
+  ul.plain li::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:.62em;
+    width:7px;
+    height:7px;
+    background:var(--accent);
+    border-radius:2px;
+  }
+
+  /* glossário */
+  dl.gloss{
+    margin:22px 0 0;
+    display:grid;
+    gap:0;
+    border-top:1px solid var(--line);
+  }
+  dl.gloss div{
+    display:grid;
+    grid-template-columns:170px 1fr;
+    gap:6px 24px;
+    padding:14px 0;
+    border-bottom:1px solid var(--line);
+  }
+  dl.gloss dt{
+    font-family:var(--f-mono);
+    font-size:14px;
+    font-weight:600;
+    color:var(--accent);
+    padding-top:2px;
+  }
+  dl.gloss dd{margin:0;}
+  @media (max-width:560px){
+    dl.gloss div{grid-template-columns:1fr;}
+  }
+
+  /* diff */
+  .diff{
+    margin:22px 0;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    background:var(--surface);
+  }
+  .diff-head{
+    font-family:var(--f-mono);
+    font-size:12.5px;
+    color:var(--muted);
+    padding:9px 14px;
+    border-bottom:1px solid var(--line);
+  }
+  .diff pre{
+    margin:0;
+    font-family:var(--f-mono);
+    font-size:13.5px;
+    line-height:1.9;
+    overflow-x:auto;
+  }
+  .diff pre span{display:block;padding:0 14px;white-space:pre;}
+  .diff .del{background:var(--del-bg);color:var(--del);}
+  .diff .add{background:var(--add-bg);color:var(--add);}
+  .diff-note{
+    font-size:14px;
+    color:var(--muted);
+    padding:10px 14px;
+    border-top:1px solid var(--line);
+    margin:0;
+  }
+
+  /* tabela */
+  .tablewrap{
+    margin:22px 0;
+    overflow-x:auto;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+  }
+  table{
+    border-collapse:collapse;
+    width:100%;
+    min-width:440px;
+    background:var(--surface);
+  }
+  th,td{
+    text-align:left;
+    padding:11px 16px;
+    border-bottom:1px solid var(--line);
+    font-size:15px;
+    vertical-align:top;
+  }
+  th{
+    font-family:var(--f-mono);
+    font-size:12px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted);
+    font-weight:600;
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  td:first-child{
+    font-family:var(--f-mono);
+    font-size:13.5px;
+    color:var(--accent);
+    white-space:nowrap;
+  }
+
+  /* atenção */
+  .warn{
+    margin:24px 0;
+    padding:4px 0 4px 20px;
+    border-left:3px solid var(--accent);
+    max-width:66ch;
+  }
+  .warn p{margin:10px 0;font-size:16px;}
+  .warn p:first-child{margin-top:0;}
+  .warn p:last-child{margin-bottom:0;}
+  .warn b{font-weight:600;}
+
+  footer{
+    margin-top:72px;
+    padding-top:22px;
+    border-top:1px solid var(--line);
+    font-size:14px;
+    color:var(--muted);
+  }
+  a:focus-visible,nav.toc a:focus-visible{
+    outline:2px solid var(--accent);
+    outline-offset:3px;
+    border-radius:3px;
+  }
+</style>
+<style>body{margin:0}img{max-width:100%}</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <p class="eyebrow">Guia de consulta</p>
+  <h1>GitHub do zero ao Pages</h1>
+  <p class="lede">Os termos, os caminhos de tela e os passos que você executou para criar um repositório, salvar versões e publicar uma página na web. Feito para ser reaberto quando a memória falhar.</p>
+
+  <ul class="links">
+    <li><span>Seu perfil</span><a href="https://github.com/rodrlr">github.com/rodrlr</a></li>
+    <li><span>Seu repositório</span><a href="https://github.com/rodrlr/meu-primeiro-repo">github.com/rodrlr/meu-primeiro-repo</a></li>
+    <li><span>Sua página no ar</span><a href="https://rodrlr.github.io/meu-primeiro-repo/">rodrlr.github.io/meu-primeiro-repo/</a></li>
+    <li><span>Seus favoritos</span><a href="https://github.com/rodrlr?tab=stars">github.com/rodrlr?tab=stars</a></li>
+  </ul>
+
+  <nav class="toc">
+    <p>Neste guia</p>
+    <ol>
+      <li><a href="#termos">Os termos que aparecem o tempo todo</a></li>
+      <li><a href="#tela">Onde cada coisa fica na tela</a></li>
+      <li><a href="#criar">Criar um repositório</a></li>
+      <li><a href="#versao">Salvar uma versão</a></li>
+      <li><a href="#pages">Publicar uma página HTML</a></li>
+      <li><a href="#buscar">Pesquisar projetos</a></li>
+      <li><a href="#avaliar">Avaliar se um projeto presta</a></li>
+      <li><a href="#pegar">Pegar o código para o seu computador</a></li>
+      <li><a href="#depois">O que vem depois</a></li>
+    </ol>
+  </nav>
+
+  <section id="termos">
+    <h2>Os termos que aparecem o tempo todo</h2>
+    <dl class="gloss">
+      <div><dt>repositório</dt><dd>A pasta de um projeto hospedada no GitHub. Tudo acontece dentro de um. Também chamado de repo.</dd></div>
+      <div><dt>commit</dt><dd>Uma versão salva. Guarda o que mudou, quem mudou, quando e por quê. Nada se perde, dá para voltar a qualquer commit anterior.</dd></div>
+      <div><dt>mensagem</dt><dd>O texto que você escreve ao salvar. É o que vai aparecer no histórico daqui a seis meses, então descreva a mudança, não o arquivo.</dd></div>
+      <div><dt>branch</dt><dd>Uma linha paralela de trabalho. Serve para mexer sem afetar a versão boa.</dd></div>
+      <div><dt>main</dt><dd>O nome da branch principal, a versão oficial. Enquanto você trabalha sozinho, só ela basta.</dd></div>
+      <div><dt>README.md</dt><dd>O arquivo de apresentação. O GitHub mostra o conteúdo dele formatado embaixo da lista de arquivos, na entrada do repositório.</dd></div>
+      <div><dt>issue</dt><dd>Uma anotação de pendência, erro ou ideia. Funciona como lista de tarefas do projeto, e qualquer pessoa pode abrir uma.</dd></div>
+      <div><dt>fork</dt><dd>Uma cópia do repositório de outra pessoa dentro da sua conta, para você mexer sem tocar no original.</dd></div>
+      <div><dt>pull request</dt><dd>Um pedido para que suas mudanças entrem no projeto de outra pessoa. Abre uma tela de discussão antes de qualquer coisa ser aceita.</dd></div>
+      <div><dt>clone</dt><dd>Baixar o repositório para o computador mantendo a ligação com o GitHub, para enviar e receber mudanças. Exige o programa Git instalado.</dd></div>
+      <div><dt>star</dt><dd>Favoritar um projeto. Vira sua estante de coisas para achar de novo depois.</dd></div>
+      <div><dt>GitHub Pages</dt><dd>O serviço que transforma os arquivos HTML do repositório num site com endereço público.</dd></div>
+    </dl>
+  </section>
+
+  <section id="tela">
+    <h2>Onde cada coisa fica na tela</h2>
+    <ul class="plain">
+      <li><b>Abas no topo do repositório.</b> <b>Code</b> são os arquivos, <b>Issues</b> as anotações, <b>Pull requests</b> as propostas de mudança, <b>Settings</b> as configurações.</li>
+      <li><b>Botão Add file.</b> Fica na mesma linha da caixa <b>Go to file</b>, à esquerda do botão verde <b>Code</b>. Com a janela estreita ele encolhe e vira só um sinal de <code>+</code>.</li>
+      <li><b>Botão verde Code.</b> É por onde se baixa o projeto, com a opção <b>Download ZIP</b>.</li>
+      <li><b>Contagem de commits.</b> O relógio com um número, acima da lista de arquivos, tipo <code>2 Commits</code>. É a porta do histórico.</li>
+      <li><b>Painel About.</b> Coluna da direita, com a descrição, a licença e os temas do projeto.</li>
+      <li><b>Publicação.</b> <span class="path"><b>Settings</b> › <b>Pages</b>, no menu da esquerda</span>.</li>
+    </ul>
+  </section>
+
+  <section id="criar">
+    <h2>Criar um repositório</h2>
+    <ol class="steps">
+      <li>Sinal de <code>+</code> no canto superior direito do site, depois <b>New repository</b>.</li>
+      <li>Em <b>Repository name</b>, um nome sem espaços e sem acento, com hífen no lugar do espaço.</li>
+      <li>Escolha <b>Public</b> ou <b>Private</b>. Privado só você vê, e serve para material interno.</li>
+      <li>Marque <b>Add a README file</b> para o repositório já nascer com uma apresentação.</li>
+      <li><b>Create repository</b>.</li>
+    </ol>
+    <div class="warn">
+      <p>O endereço do repositório é sempre <code>github.com/seu-usuario/nome-do-repo</code>. Dá para digitar direto no navegador, sem procurar por menus.</p>
+    </div>
+  </section>
+
+  <section id="versao">
+    <h2>Salvar uma versão</h2>
+    <p>Há três formas de colocar conteúdo lá dentro, todas no botão <b>Add file</b> da página inicial do repositório, exceto a terceira.</p>
+    <ul class="plain">
+      <li><b>Upload files</b> abre uma área para arrastar arquivos do seu computador. É o caminho do dia a dia para mandar um <code>.py</code>, um <code>.sql</code> ou um <code>.html</code> que já existe.</li>
+      <li><b>Create new file</b> cria um arquivo em branco direto no navegador.</li>
+      <li><b>O ícone de lápis</b>, ao abrir um arquivo já existente, edita o conteúdo ali mesmo.</li>
+    </ul>
+    <p>Em qualquer um dos três, o salvamento é o mesmo: botão verde <b>Commit changes</b>, troque a mensagem automática por uma descrição da mudança, mantenha <b>Commit directly to the main branch</b> e confirme.</p>
+
+    <h3>Ver o que mudou</h3>
+    <p>Clique na contagem de <b>Commits</b> e depois na mensagem que te interessa. Aparece a comparação linha a linha, vermelho para o que saiu e verde para o que entrou.</p>
+    <div class="diff">
+      <p class="diff-head">README.md</p>
+      <pre><span class="del">- # meu-primeiro-repo</span><span class="add">+ # Meu primeiro repositório</span><span class="add">+</span><span class="add">+ Estou aprendendo a usar o GitHub.</span></pre>
+      <p class="diff-note">O sinal de menos é a linha antiga, o de mais é a nova. Linhas sem sinal ficaram iguais.</p>
+    </div>
+    <p>É esse registro que substitui a pasta cheia de <code>relatorio_v2_final_agora_vai.py</code>. Um arquivo só, com todas as versões anteriores recuperáveis e cada uma explicada por quem a salvou.</p>
+  </section>
+
+  <section id="pages">
+    <h2>Publicar uma página HTML</h2>
+    <ol class="steps">
+      <li>Coloque no repositório um arquivo chamado exatamente <code>index.html</code>. O nome importa, é ele que o serviço procura como página de entrada.</li>
+      <li>Vá em <b>Settings</b>, e no menu da esquerda clique em <b>Pages</b>.</li>
+      <li>Em <b>Source</b>, deixe <b>Deploy from a branch</b>.</li>
+      <li>Em <b>Branch</b>, troque <b>None</b> por <b>main</b> e deixe o seletor ao lado em <code>/ (root)</code>.</li>
+      <li><b>Save</b>. A frase confirmando que o site está sendo construído aparece logo acima.</li>
+      <li>Espere um ou dois minutos e recarregue a página. O endereço aparece no topo da seção, no formato <code>seu-usuario.github.io/nome-do-repo/</code>.</li>
+    </ol>
+    <div class="warn">
+      <p><b>Duas limitações.</b> O Pages serve apenas páginas estáticas, ou seja, HTML, CSS, JavaScript e arquivos de dados. Nada que precise rodar no servidor, como Python, PHP ou consultas a banco.</p>
+      <p>E se o repositório é público, qualquer pessoa com o link vê a página, mesmo que ela não apareça no Google. Material sensível não vai para um repositório público.</p>
+      <p><b>Erro 404 logo depois de salvar</b> costuma ser só a construção que ainda não terminou. Espere e recarregue. Se insistir, confirme que o arquivo se chama <code>index.html</code> e está na raiz do repositório, não dentro de uma subpasta.</p>
+    </div>
+    <p>Para atualizar o site depois, basta enviar uma nova versão do arquivo e fazer o commit. A publicação refaz sozinha em um ou dois minutos.</p>
+  </section>
+
+  <section id="buscar">
+    <h2>Pesquisar projetos</h2>
+    <p>A busca fica na barra do topo. O que muda o resultado é usar filtros, escritos colados com dois pontos e sem espaço depois. Vários filtros na mesma linha se somam.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Filtro</th><th>O que faz</th></tr></thead>
+        <tbody>
+          <tr><td>language:python</td><td>Só projetos naquela linguagem</td></tr>
+          <tr><td>stars:&gt;500</td><td>Corta o que ninguém usa</td></tr>
+          <tr><td>topic:dashboard</td><td>Tema declarado pelo próprio autor do projeto</td></tr>
+          <tr><td>in:name streamlit</td><td>A palavra precisa estar no nome do repositório</td></tr>
+          <tr><td>in:readme cooperativa</td><td>A palavra precisa estar no texto de apresentação</td></tr>
+          <tr><td>pushed:&gt;2026-01-01</td><td>Só o que teve movimento desde essa data</td></tr>
+          <tr><td>license:mit</td><td>Só o que tem licença de uso liberada</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Na página de resultados, as abas da esquerda mudam o que está sendo procurado. <b>Repositories</b> busca projetos inteiros e resolve quase tudo. <b>Code</b> busca dentro dos arquivos, útil quando você quer ver como alguém escreveu um trecho específico.</p>
+  </section>
+
+  <section id="avaliar">
+    <h2>Avaliar se um projeto presta</h2>
+    <p>Abra o repositório e olhe nesta ordem, que vai do sinal mais barato ao mais caro de verificar.</p>
+    <ol class="steps">
+      <li><b>Data do último commit.</b> O texto cinza no canto direito da lista de arquivos. Projeto parado há anos costuma quebrar com bibliotecas atuais.</li>
+      <li><b>README.</b> Se não explica como instalar e não mostra um exemplo de uso, vai te custar caro.</li>
+      <li><b>Issues.</b> Centenas abertas sem resposta há meses significa que ninguém está cuidando daquilo.</li>
+      <li><b>Licença</b>, no painel <b>About</b> à direita. MIT e Apache 2.0 liberam uso e modificação. Repositório sem licença nenhuma, tecnicamente, não dá permissão de uso, o que pesa quando é para uso institucional.</li>
+      <li><b>Estrelas.</b> Dizem popularidade, não qualidade. Servem para ordenar resultados, não para decidir.</li>
+    </ol>
+  </section>
+
+  <section id="pegar">
+    <h2>Pegar o código para o seu computador</h2>
+    <ul class="plain">
+      <li><b>Download ZIP</b>, dentro do botão verde <b>Code</b>, baixa a pasta inteira. Funciona sempre e não exige instalar nada.</li>
+      <li><b>Se for uma biblioteca Python</b>, o caminho normal não é baixar do GitHub, é rodar <code>pip install nome-da-biblioteca</code>. O repositório serve para ler o código, a documentação e as issues antes de instalar.</li>
+      <li><b>Fork</b>, no topo direito, copia o projeto para a sua conta quando você quer modificar e manter a sua versão.</li>
+    </ul>
+  </section>
+
+  <section id="depois">
+    <h2>O que vem depois</h2>
+    <p>Tudo neste guia é feito pelo navegador, sem instalar nada. Os três passos seguintes, quando fizerem falta:</p>
+    <ul class="plain">
+      <li><b>Git no computador.</b> O programa que faz commits sem passar pelo site, útil quando são muitos arquivos ou quando você quer versionar enquanto trabalha.</li>
+      <li><b>Branch e pull request.</b> O fluxo de trabalhar em paralelo e revisar antes de juntar, que é o que faz sentido quando mais de uma pessoa mexe no mesmo projeto.</li>
+      <li><b>Repositório privado com colaboradores.</b> Em <b>Settings</b>, a opção de dar acesso a pessoas específicas sem abrir o conteúdo para o mundo.</li>
+    </ul>
+  </section>
+
+  <footer>Guia montado a partir dos passos executados na sessão de 12 de setembro de 2026.</footer>
+
+</div>
+</body>
+</html>
